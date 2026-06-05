@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Go Love Backend</title>
+
+<style>
+:root{
+  --bg:#0b0f14;
+  --panel:#121821;
+  --panel2:#18212d;
+  --line:#2b3543;
+  --text:#e6edf3;
+  --muted:#8b949e;
+  --go:#00add8;
+  --blue:#58a6ff;
+  --yellow:#f2cc60;
+  --pink:#ff7baf;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  background:
+    radial-gradient(circle at 20% 10%,rgba(0,173,216,.15),transparent 30%),
+    radial-gradient(circle at 90% 90%,rgba(255,123,175,.10),transparent 30%),
+    var(--bg);
+  color:var(--text);
+  font-family:Consolas,"Courier New",monospace;
+}
+.page{max-width:1100px;margin:auto;padding:22px}
+.window{
+  border:1px solid var(--line);
+  background:rgba(18,24,33,.96);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 30px 90px rgba(0,0,0,.45);
+}
+.topbar{
+  height:46px;
+  background:#080c10;
+  border-bottom:1px solid var(--line);
+  display:flex;
+  align-items:center;
+  padding:0 16px;
+  gap:8px;
+}
+.dot{width:12px;height:12px;border-radius:50%}
+.r{background:#ff5f56}.y{background:#ffbd2e}.g{background:#27c93f}
+.path{margin-left:12px;color:var(--muted);font-size:13px}
+.layout{display:grid;grid-template-columns:270px 1fr;min-height:650px}
+.sidebar{
+  border-right:1px solid var(--line);
+  background:#0f141b;
+  padding:18px;
+}
+.file{
+  padding:9px 12px;
+  border-radius:8px;
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:5px;
+}
+.file.active{background:var(--panel2);color:var(--go)}
+.main{padding:24px}
+.badge{
+  display:inline-flex;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#17212b;
+  border:1px solid var(--line);
+  color:var(--go);
+  font-size:12px;
+  margin-bottom:16px;
+}
+h1{margin:0 0 10px;font-size:30px;color:white}
+h2{margin-top:0;color:white}
+p{color:var(--muted);line-height:1.7}
+.codebox,.card,.final{
+  background:#070b10;
+  border:1px solid var(--line);
+  border-radius:14px;
+  padding:18px;
+  margin-top:16px;
+}
+pre{
+  white-space:pre-wrap;
+  color:#d6deeb;
+  font-size:14px;
+  line-height:1.6;
+  margin:0;
+}
+.kw{color:var(--go)}
+.str{color:var(--yellow)}
+.fn{color:var(--blue)}
+.cm{color:#6a737d}
+.love{color:var(--pink)}
+input{
+  width:100%;
+  padding:14px;
+  background:#080c10;
+  border:1px solid var(--line);
+  border-radius:10px;
+  color:var(--text);
+  font-family:inherit;
+  margin:12px 0;
+}
+button{
+  background:#00add8;
+  color:#061018;
+  border:0;
+  padding:12px 16px;
+  border-radius:9px;
+  font-family:inherit;
+  font-weight:700;
+  cursor:pointer;
+  margin:6px 6px 6px 0;
+}
+button:hover{filter:brightness(1.12);transform:translateY(-1px)}
+.hidden{display:none}
+.progress{
+  height:14px;
+  background:#30363d;
+  border-radius:999px;
+  overflow:hidden;
+  margin:16px 0;
+}
+.bar{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--go),var(--blue),var(--pink));
+  transition:.35s;
+}
+.answer{margin-top:12px;color:var(--yellow);min-height:24px}
+.log{color:var(--muted);font-size:13px}
+.score{color:var(--pink);font-weight:bold}
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#121821;
+  border:1px solid var(--line);
+  color:var(--text);
+  padding:14px 16px;
+  border-radius:12px;
+  display:none;
+}
+@media(max-width:800px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .page{padding:12px}
+}
+</style>
+</head>
+
+<body>
+<div class="page">
+  <div class="window">
+    <div class="topbar">
+      <div class="dot r"></div>
+      <div class="dot y"></div>
+      <div class="dot g"></div>
+      <div class="path">go-love-backend/main.go</div>
+    </div>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="file active">📁 go-love-backend</div>
+        <div class="file">├─ main.go</div>
+        <div class="file">├─ auth.go</div>
+        <div class="file">├─ relationship_test.go</div>
+        <div class="file">├─ ldr_config.go</div>
+        <div class="file">├─ bianca.go</div>
+        <div class="file">└─ final_message.go</div>
+      </aside>
+
+      <main class="main">
+
+        <section id="authScreen">
+          <div class="badge">● GO SERVER LOCKED · ANNIVERSARY 4.0</div>
+          <h1>Pertanyaan Quiz GO Gampang Bagi Epo</h1>
+          <p>Sebelum masuk ke relationship test, solve dulu auth challenge ini ya pak epo backend. Kalau salah, berarti server kamu butuh emotional debugging 😭</p>
+
+          <div class="codebox">
+<pre><span class="kw">package</span> main
+
+<span class="kw">import</span> <span class="str">"strings"</span>
+
+<span class="kw">func</span> <span class="fn">GeneratePassword</span>() <span class="kw">string</span> {
+    boyfriend := <span class="str">"epo"</span>
+    girlfriend := <span class="str">"bianca"</span>
+    yearsTogether := <span class="str">"4"</span>
+    promise := <span class="str">"ever"</span>
+
+    password := boyfriend + girlfriend + yearsTogether + promise
+
+    <span class="kw">return</span> strings.ToLower(password)
+}</pre>
+          </div>
+
+          <div class="card">
+            <h2>Auth Challenge</h2>
+            <p>Output dari function <b>GeneratePassword()</b> itu apa?</p>
+            <p>Format: lowercase semua, no space.</p>
+            <input id="authInput" placeholder="type generated password..." />
+            <button onclick="checkAuth()">go test auth.go</button>
+            <p id="authMsg" class="answer"></p>
+          </div>
+        </section>
+
+        <section id="loadingScreen" class="hidden">
+          <div class="badge">● AUTH SUCCESS</div>
+          <h1>go run main.go</h1>
+          <div class="codebox" id="loadingLogs"></div>
+        </section>
+
+        <section id="gameScreen" class="hidden">
+          <div class="badge">● RELATIONSHIP TEST RUNNING</div>
+          <h1>relationship_test.go</h1>
+          <p class="log" id="counter"></p>
+          <p class="log">Score: <span class="score" id="score">0</span></p>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+
+          <div class="card">
+            <h2 id="question"></h2>
+            <div id="options"></div>
+            <p id="feedback" class="answer"></p>
+          </div>
+        </section>
+
+        <section id="finalScreen" class="hidden">
+          <div class="badge">● ALL TESTS PASSED</div>
+          <h1>Deploy Success 🤍</h1>
+          <div class="final">
+            <p id="finalText"></p>
+            <button onclick="showToast()">fmt.Println(finalMessage)</button>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">fmt.Println("she still chooses you 🤍")</div>
+
+<script>
+const correctPassword = "epobianca4ever";
+let current = 0;
+let score = 0;
+
+const logs = [
+  "go test auth.go",
+  "PASS: password matched",
+  "go run main.go",
+  "connecting Bali server...",
+  "connecting Jakarta server...",
+  "loading 4 years of memories...",
+  "importing kangen package...",
+  "checking LDR config...",
+  "relationship_test.go ready. jangan salah jawab ya."
+];
+
+const questions = [
+  {
+    q:"1. func ReadGapapa(input string) harus return apa kalau aku bilang 'gapapa' tapi tone-ku pendek?",
+    options:["return 'aman kok'","return 'cek pelan-pelan dulu'","return 'langsung tidur'"],
+    correct:1,
+    msg:"PASS. 'gapapa' itu kadang bukan final response, itu warning kecil."
+  },
+  {
+    q:"2. Kalau aku bilang 'aku kangen', response yang paling aman buat production?",
+    options:["aku juga kangen","nanti ya aku sibuk","yaudah jangan kangen"],
+    correct:0,
+    msg:"PASS. simple, tapi penting banget."
+  },
+  {
+    q:"3. Relationship kita sekarang jalan di mode apa?",
+    options:["easy mode","LDR mode: nyebelin tapi survive","demo version"],
+    correct:1,
+    msg:"PASS. hard mode tapi masih running."
+  },
+  {
+    q:"4. Kalau nanti kita satu kota, feature request pertama dari aku apa?",
+    options:["ngopi/matcha bareng","ketemu tanpa harus nunggu tiket","dua-duanya"],
+    correct:2,
+    msg:"PASS. ini bukan request, ini roadmap."
+  },
+  {
+    q:"5. Kalau aku lagi sedih, kamu jangan langsung...",
+    options:["dengerin tapi sambilan nonton","kasih solusi panjang + mendengarkan + support yang terbaik","temenin aja abistu tinggal tidur"],
+    correct:1,
+    msg:"PASS. kadang aku butuh didengerin dulu, bukan langsung solved."
+  },
+  {
+    q:"6. Setelah 4 tahun, aku makin lihat...",
+    options:["real you","versi iklan kamu","random NPC"],
+    correct:0,
+    msg:"PASS. real you, dan aku masih stay."
+  },
+  {
+    q:"7. Kalau kamu punya flaws, sistem aku akan...",
+    options:["reject request","accept with love","panic error"],
+    correct:1,
+    msg:"PASS. full package accepted."
+  },
+  {
+    q:"8. Aku never regret...",
+    options:["being your woman","beli matcha","keduanya"],
+    correct:2,
+    msg:"PASS. ini statement serius ya."
+  },
+  {
+    q:"9. Kalau aku bilang aku proud of you, kamu harus...",
+    options:["percaya + kasi upah","ngeles","ganti topik"],
+    correct:0,
+    msg:"PASS. minimal percaya dikit aja dulu. upahnya bonus ya hehe"
+  },
+  {
+    q:"10. Hal paling nyebelin dari LDR?",
+    options:["nggak bisa peluk langsung","nunggu uang banyak buat ketemu","dua-duanya"],
+    correct:2,
+    msg:"PASS. LDR tuh emotionally expensive."
+  },
+  {
+    q:"11. Kalau aku call epo, buat aku itu...",
+    options:["mau bonding, inget jaraknya jauh","nggak penting","cuma formalitas"],
+    correct:0,
+    msg:"PASS. call, big feelings pokoknyaaa."
+  },
+  {
+    q:"12. Aku pengen kamu makin...",
+    options:["dewasa dan wise","jago ngilang","dingin"],
+    correct:0,
+    msg:"PASS. dewasa, wise, tapi tetap kamu, tahun ke tahun better version."
+  },
+  {
+    q:"13. Aku bakal selalu berusaha...",
+    options:["support kamu","jadi sempurna","nggak butuh kamu"],
+    correct:0,
+    msg:"PASS. walau aku juga masih banyak kurangnya."
+  },
+  {
+    q:"14. Kalau hidup lagi berat, kamu harus ingat...",
+    options:["kamu tetap loved","harus kuat sendiri terus","jangan cerita"],
+    correct:0,
+    msg:"PASS. kamu nggak harus perfect dulu buat dicintai."
+  },
+  {
+    q:"15. Kalau kita capek atau salah paham, cara paling sehat adalah?",
+    options:["pelan-pelan ngomong baik-baik","adu ego","menghilang"],
+    correct:0,
+    msg:"PASS. bukan gampang, tapi paling worth it."
+  },
+  {
+    q:"16. Aku happy kamu exist karena...",
+    options:["kamu bagian hidupku anjayy","kamu random aja","server kamu aktif"],
+    correct:0,
+    msg:"PASS. simple. aku happy kamu ada, cringe tapi bener gmn ya."
+  },
+  {
+    q:"17. Kalau aku pengen explore coffee shop, makan enak, olahraga bareng, artinya aku pengen...",
+    options:["quality time sama epo","bikin itinerary random tanpa arah","ngabisin uang"],
+    correct:0,
+    msg:"PASS. aku pengen hidupin hal-hal kecil sama kamu."
+  },
+  {
+    q:"18. Update yang paling aku tunggu?",
+    options:["Same City DLC","LDR v5.0 tanpa improvement","ghosting patch"],
+    correct:0,
+    msg:"PASS. Same City DLC kapan rilis ya."
+  },
+  {
+    q:"19. Kalau aku bilang semakin keliatan real you, maksudnya...",
+    options:["aku kecewa","aku makin kenal kamu dan tetap sayang pokoknya","aku lagi audit"],
+    correct:1,
+    msg:"PASS. real you bukan alasan buat pergi."
+  },
+  {
+    q:"20. Final boss: aku sayang kamu bagian mana?",
+    options:["yang bagus aja","yang kuat aja","every part of you"],
+    correct:2,
+    msg:"PASS. every part of you. even the messy parts."
+  }
+];
+
+function checkAuth(){
+  const input = document.getElementById("authInput").value.trim().toLowerCase();
+
+  if(input === correctPassword){
+    document.getElementById("authScreen").classList.add("hidden");
+    document.getElementById("loadingScreen").classList.remove("hidden");
+    runLogs();
+  } else {
+    document.getElementById("authMsg").innerText =
+      "FAIL: 401 Unauthorized. coba debug lagi ya pak epo, masa password love system salah siii😭";
+  }
+}
+
+function runLogs(){
+  const box = document.getElementById("loadingLogs");
+  box.innerHTML = "";
+  let i = 0;
+
+  const interval = setInterval(() => {
+    if(i < logs.length){
+      const div = document.createElement("pre");
+      div.innerHTML = `<span class="kw">></span> ${logs[i]}`;
+      box.appendChild(div);
+      i++;
+    } else {
+      clearInterval(interval);
+      setTimeout(() => {
+        document.getElementById("loadingScreen").classList.add("hidden");
+        document.getElementById("gameScreen").classList.remove("hidden");
+        showQuestion();
+      }, 700);
+    }
+  }, 430);
+}
+
+function showQuestion(){
+  document.getElementById("feedback").innerText = "";
+  document.getElementById("question").innerText = questions[current].q;
+  document.getElementById("counter").innerText = `Running test ${current + 1} of ${questions.length}`;
+  document.getElementById("bar").style.width = ((current + 1) / questions.length) * 100 + "%";
+
+  const optionsBox = document.getElementById("options");
+  optionsBox.innerHTML = "";
+
+  questions[current].options.forEach((opt, i) => {
+    const btn = document.createElement("button");
+    btn.innerText = opt;
+    btn.onclick = () => checkAnswer(i);
+    optionsBox.appendChild(btn);
+  });
+}
+
+function checkAnswer(i){
+  if(i === questions[current].correct){
+    score++;
+    document.getElementById("score").innerText = score;
+    document.getElementById("feedback").innerText = questions[current].msg;
+
+    setTimeout(() => {
+      current++;
+      if(current < questions.length){
+        showQuestion();
+      } else {
+        showFinal();
+      }
+    }, 1200);
+  } else {
+    document.getElementById("feedback").innerText =
+      "FAIL 😭 ayokk coba lagi. masa soal relationship sendiri salah unit test. kalau salah lagi ga lese2 loh!";
+  }
+}
+
+function showFinal(){
+  document.getElementById("gameScreen").classList.add("hidden");
+  document.getElementById("finalScreen").classList.remove("hidden");
+
+  document.getElementById("finalText").innerText =
+`Score kamu ${score}/${questions.length}. Not bad ya pak backend.
+
+Happy 4th anniversary, Epo.
+Dari 11 June 2022 sampai 11 June 2026, kita masih jalan walau LDR kadang nyebelin banget, kadang juga kasi pelajaran berarti.
+Aku nggak pernah nyesel jadi partner epo. Semakin aku lihat real version of you, semakin aku sadar aku masih love every part of you anjay cringe.
+
+Semoga kita makin dewasa, makin wise, makin kuat, tapi tetap selalu being the fun, unique us. Semoga cita-cita, tujuan kita tercapai ya, 
+dan aku akan terus berusaha nemenin and support terus. Semoga suatu hari nanti, kita nggak cuma goodnight dari kota yang beda hehehe.
+
+Love, Bianca.`;
+}
+
+function showToast(){
+  const toast = document.getElementById("toast");
+  toast.style.display = "block";
+  setTimeout(() => toast.style.display = "none", 2600);
+}
+</script>
+</body>
+</html>
